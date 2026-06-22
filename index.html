@@ -296,7 +296,7 @@ function render(data){
 
   // records
   const records = `
-  <div class="sec-label">for the record</div>
+  <div class="sec-label">records</div>
   <div class="panel records">
     <div class="rec-list">
       <div class="rec"><div class="ico">⏳</div><div>
@@ -392,7 +392,7 @@ function buildHeat(timeByDay, start, end, today){
   }).join("");
 
   return `
-  <div class="sec-label">the distance, day by day</div>
+  <div class="sec-label">day by day</div>
   <div class="panel">
     <div class="heat-head">
       <div><h2>Call heatmap</h2><p class="lead" style="margin-bottom:0">Warmer squares, longer talks. Every box is a day of summer.</p></div>
@@ -421,7 +421,7 @@ function buildLog(calls){
   }).join("");
 
   return `
-  <div class="sec-label">the full log</div>
+  <div class="sec-label">full log</div>
   <div class="log-head">
     <div class="lead" style="margin:0;color:var(--muted)">${sorted.length} calls · newest first</div>
   </div>
