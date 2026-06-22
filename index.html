@@ -184,7 +184,7 @@
 <div class="tip" id="tip"></div>
 
 <script>
-const DATA_URL = "data/calls.json";
+const DATA_URL = "calls.json";
 
 const fmtDur = m => {
   if(!m) return "—";
@@ -212,7 +212,7 @@ fetch(DATA_URL, {cache:"no-store"})
   .then(render)
   .catch(e => {
     document.getElementById("app").innerHTML =
-      `<div class="err"><b>Couldn't load the call log.</b><br>Make sure <code>data/calls.json</code> sits next to this page and is valid JSON. (${e.message})</div>`;
+      `<div class="err"><b>Couldn't load the call log.</b><br>Make sure <code>calls.json</code> sits next to this page and is valid JSON. (${e.message})</div>`;
   });
 
 function render(data){
