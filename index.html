@@ -357,10 +357,23 @@ function startCountdown(summerEnd, endLabel){
     // live countdown in the tab title, like a focus timer
     document.title = `${days}d ${pad(hrsSub)}:${pad(min)}:${pad(sec)} · our summer on call`;
 
-    if(diff === 0 && startCountdown._t){ clearInterval(startCountdown._t); }
+    if(diff === 0){
+      if(startCountdown._t) clearInterval(startCountdown._t);
+      if(startCountdown._w) startCountdown._w.terminate();
+    }
   }
   tick();
-  startCountdown._t = setInterval(tick, 1000);
+  // Drive the tick from a Web Worker so the tab title keeps counting while the
+  // tab is in the background — background setInterval gets throttled to ~1/min.
+  try{
+    const blob = new Blob(["setInterval(function(){postMessage(0)},1000)"], {type:"application/javascript"});
+    startCountdown._w = new Worker(URL.createObjectURL(blob));
+    startCountdown._w.onmessage = tick;
+  }catch(e){
+    startCountdown._t = setInterval(tick, 1000);
+  }
+  // Snap to the correct time the instant the tab becomes visible again.
+  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) tick(); });
 }
 
 function colorFor(min){
