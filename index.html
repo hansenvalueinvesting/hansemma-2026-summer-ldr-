@@ -252,8 +252,8 @@ function render(data){
     document.getElementById("sun").style.left = progressPct.toFixed(1)+"%";
   });
   document.getElementById("countCaption").innerHTML = daysLeft>0
-    ? `<b>${daysLeft}</b> sunsets apart — until we're back under the same sky on <b>${endLabel}</b>`
-    : `back under the same sky — <b>${endLabel}</b> at last`;
+    ? `<b>${daysLeft}</b> more sunsets apart — until we're back together on <b>${endLabel}</b>`
+    : `back together at last — <b>${endLabel}</b>`;
 
   // ---------- build DOM ----------
   const app = document.getElementById("app");
@@ -278,7 +278,7 @@ function render(data){
   // summer spent talking
   const talking = `
   <div class="panel" style="margin-top:16px">
-    <h2>Summer spent talking</h2>
+    <h2>Summer spent on call</h2>
     <p class="lead">Of every hour apart so far, this much was voice-to-voice.</p>
     <div class="pct-big">${pctOnCall.toFixed(2)}<small>%</small></div>
     <div class="bar"><i style="width:${Math.min(100,pctOnCall*4).toFixed(2)}%"></i></div>
