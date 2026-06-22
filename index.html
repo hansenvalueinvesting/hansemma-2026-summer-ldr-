@@ -263,7 +263,6 @@ function render(data){
     document.getElementById("trackFill").style.width = progressPct.toFixed(1)+"%";
     document.getElementById("sun").style.left = progressPct.toFixed(1)+"%";
   });
-  startCountdown(data.summerEnd, endLabel);
 
   // ---------- build DOM ----------
   const app = document.getElementById("app");
@@ -281,7 +280,7 @@ function render(data){
       <div class="v">${avg}<small>min</small></div>
       <div class="cap">${fmtLongDur(avg)} a sitting</div></div>
     <div class="card"><div class="k">Days reunited in</div>
-      <div class="v">${daysLeft}</div>
+      <div class="v" id="stat-days">${daysLeft}</div>
       <div class="cap">until 15 Sep</div></div>
   </div>`;
 
@@ -323,6 +322,7 @@ function render(data){
 
   app.innerHTML = stats + talking + records + heat + log;
   wireHeatTip();
+  startCountdown(data.summerEnd, endLabel);
 }
 
 // live countdown to reunion — days in the caption, hrs/min/sec ticking below
@@ -330,6 +330,7 @@ function startCountdown(summerEnd, endLabel){
   const [ey,em,ed] = summerEnd.split("-").map(Number);
   const target = new Date(ey, em-1, ed, 0, 0, 0, 0); // local midnight on reunion day
   const cap = document.getElementById("countCaption");
+  const statDays = document.getElementById("stat-days");
   const elD = {h:document.getElementById("cd-h"), m:document.getElementById("cd-m"), s:document.getElementById("cd-s")};
   const pad = n => String(n).padStart(2,"0");
 
@@ -345,6 +346,7 @@ function startCountdown(summerEnd, endLabel){
     cap.innerHTML = days>0
       ? `<b>${days}</b> more sunsets apart — until we're back together on <b>${endLabel}</b>`
       : `the last day apart — back together on <b>${endLabel}</b>`;
+    if(statDays) statDays.textContent = days;
     elD.h.textContent = pad(hrs);
     elD.m.textContent = pad(min);
     elD.s.textContent = pad(sec);
