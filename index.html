@@ -69,10 +69,10 @@
   }
   .count-caption{margin-top:30px;color:var(--muted);font-size:14.5px;letter-spacing:.01em}
   .count-caption b{color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums}
-  .ticker{display:flex;justify-content:center;gap:14px;margin-top:16px}
-  .ticker .unit{display:flex;flex-direction:column;align-items:center;min-width:54px;
+  .ticker{display:flex;justify-content:center;gap:10px;margin-top:16px}
+  .ticker .unit{display:flex;flex-direction:column;align-items:center;min-width:50px;
     background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:10px 8px 8px}
-  .ticker .unit b{font-family:'Fraunces',serif;font-weight:500;font-size:28px;line-height:1;
+  .ticker .unit b{font-family:'Fraunces',serif;font-weight:500;font-size:27px;line-height:1;
     color:var(--cream);font-variant-numeric:tabular-nums}
   .ticker .unit i{font-size:10px;letter-spacing:.18em;text-transform:uppercase;
     color:var(--peach);font-style:normal;margin-top:6px;opacity:.85}
@@ -169,6 +169,7 @@
       <div class="track"><i class="track-fill" id="trackFill"></i><span class="sun" id="sun"></span></div>
       <p class="count-caption" id="countCaption"></p>
       <div class="ticker" id="ticker" aria-label="time until reunion">
+        <span class="unit"><b id="cd-d">--</b><i>days</i></span>
         <span class="unit"><b id="cd-h">--</b><i>hrs</i></span>
         <span class="unit"><b id="cd-m">--</b><i>min</i></span>
         <span class="unit"><b id="cd-s">--</b><i>sec</i></span>
@@ -331,7 +332,7 @@ function startCountdown(summerEnd, endLabel){
   const target = new Date(ey, em-1, ed, 0, 0, 0, 0); // local midnight on reunion day
   const cap = document.getElementById("countCaption");
   const statDays = document.getElementById("stat-days");
-  const elD = {h:document.getElementById("cd-h"), m:document.getElementById("cd-m"), s:document.getElementById("cd-s")};
+  const elD = {d:document.getElementById("cd-d"), h:document.getElementById("cd-h"), m:document.getElementById("cd-m"), s:document.getElementById("cd-s")};
   const pad = n => String(n).padStart(2,"0");
 
   function tick(){
@@ -347,6 +348,7 @@ function startCountdown(summerEnd, endLabel){
       ? `<b>${days}</b> more sunsets apart — until we're back together on <b>${endLabel}</b>`
       : `the last day apart — back together on <b>${endLabel}</b>`;
     if(statDays) statDays.textContent = days;
+    elD.d.textContent = days;
     elD.h.textContent = pad(hrs);
     elD.m.textContent = pad(min);
     elD.s.textContent = pad(sec);
