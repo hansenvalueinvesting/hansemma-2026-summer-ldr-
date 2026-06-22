@@ -339,11 +339,12 @@ function startCountdown(summerEnd, endLabel){
   function tick(){
     let diff = target - new Date();
     if(diff < 0) diff = 0;
-    const tot  = Math.floor(diff/1000);
-    const days = Math.floor(tot/86400);
-    const hrs  = Math.floor(tot/3600);     // total hours left, standalone
-    const min  = Math.floor((tot%3600)/60);
-    const sec  = tot%60;
+    const tot   = Math.floor(diff/1000);
+    const days  = Math.floor(tot/86400);
+    const hrs   = Math.floor(tot/3600);          // total hours left, standalone (on-page ticker)
+    const hrsSub= Math.floor((tot%86400)/3600);  // hours within the day (tab title, alongside days)
+    const min   = Math.floor((tot%3600)/60);
+    const sec   = tot%60;
 
     cap.innerHTML = days>0
       ? `<b>${days}</b> more sunsets apart — until we're back together on <b>${endLabel}</b>`
@@ -354,7 +355,7 @@ function startCountdown(summerEnd, endLabel){
     elD.s.textContent = pad(sec);
 
     // live countdown in the tab title, like a focus timer
-    document.title = `${hrs}:${pad(min)}:${pad(sec)} · our summer on call`;
+    document.title = `${days}d ${pad(hrsSub)}:${pad(min)}:${pad(sec)} · our summer on call`;
 
     if(diff === 0 && startCountdown._t){ clearInterval(startCountdown._t); }
   }
