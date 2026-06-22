@@ -1,0 +1,282 @@
+{
+  "_README": "Add a new call by copying a line in the calls array below. Format: {\"date\":\"YYYY-MM-DD\", \"time\":\"HH:MM\", \"minutes\": <number>}. Set minutes to 0 (and add a \"note\") for cancelled/missed calls -- they count as an entry but add no time. Keep dates in ISO YYYY-MM-DD. Summer window is set by summerStart/summerEnd.",
+  "summerStart": "2026-06-04",
+  "summerEnd": "2026-09-15",
+  "calls": [
+    {
+      "date": "2026-06-21",
+      "time": "23:22",
+      "minutes": 82
+    },
+    {
+      "date": "2026-06-21",
+      "time": "23:19",
+      "minutes": 0,
+      "note": "cancelled"
+    },
+    {
+      "date": "2026-06-21",
+      "time": "21:52",
+      "minutes": 86
+    },
+    {
+      "date": "2026-06-21",
+      "time": "21:43",
+      "minutes": 8
+    },
+    {
+      "date": "2026-06-20",
+      "time": "20:50",
+      "minutes": 104
+    },
+    {
+      "date": "2026-06-19",
+      "time": "21:00",
+      "minutes": 135
+    },
+    {
+      "date": "2026-06-18",
+      "time": "20:21",
+      "minutes": 101
+    },
+    {
+      "date": "2026-06-18",
+      "time": "20:20",
+      "minutes": 0,
+      "note": "cancelled"
+    },
+    {
+      "date": "2026-06-17",
+      "time": "21:52",
+      "minutes": 58
+    },
+    {
+      "date": "2026-06-16",
+      "time": "20:29",
+      "minutes": 220
+    },
+    {
+      "date": "2026-06-15",
+      "time": "21:03",
+      "minutes": 172
+    },
+    {
+      "date": "2026-06-15",
+      "time": "20:49",
+      "minutes": 13
+    },
+    {
+      "date": "2026-06-15",
+      "time": "16:22",
+      "minutes": 37
+    },
+    {
+      "date": "2026-06-14",
+      "time": "21:41",
+      "minutes": 134
+    },
+    {
+      "date": "2026-06-14",
+      "time": "19:13",
+      "minutes": 77
+    },
+    {
+      "date": "2026-06-14",
+      "time": "14:11",
+      "minutes": 133
+    },
+    {
+      "date": "2026-06-13",
+      "time": "23:19",
+      "minutes": 28
+    },
+    {
+      "date": "2026-06-13",
+      "time": "22:14",
+      "minutes": 65
+    },
+    {
+      "date": "2026-06-13",
+      "time": "16:10",
+      "minutes": 62
+    },
+    {
+      "date": "2026-06-13",
+      "time": "16:10",
+      "minutes": 0,
+      "note": "cancelled"
+    },
+    {
+      "date": "2026-06-12",
+      "time": "23:54",
+      "minutes": 37
+    },
+    {
+      "date": "2026-06-12",
+      "time": "20:37",
+      "minutes": 188
+    },
+    {
+      "date": "2026-06-12",
+      "time": "18:06",
+      "minutes": 9
+    },
+    {
+      "date": "2026-06-12",
+      "time": "15:40",
+      "minutes": 145
+    },
+    {
+      "date": "2026-06-12",
+      "time": "13:35",
+      "minutes": 29
+    },
+    {
+      "date": "2026-06-12",
+      "time": "12:54",
+      "minutes": 77
+    },
+    {
+      "date": "2026-06-12",
+      "time": "10:36",
+      "minutes": 21
+    },
+    {
+      "date": "2026-06-11",
+      "time": "19:44",
+      "minutes": 0,
+      "note": "cancelled"
+    },
+    {
+      "date": "2026-06-11",
+      "time": "16:01",
+      "minutes": 8
+    },
+    {
+      "date": "2026-06-10",
+      "time": "21:31",
+      "minutes": 27
+    },
+    {
+      "date": "2026-06-10",
+      "time": "21:31",
+      "minutes": 0,
+      "note": "cancelled"
+    },
+    {
+      "date": "2026-06-10",
+      "time": "20:43",
+      "minutes": 42
+    },
+    {
+      "date": "2026-06-09",
+      "time": "23:41",
+      "minutes": 21
+    },
+    {
+      "date": "2026-06-09",
+      "time": "23:41",
+      "minutes": 0,
+      "note": "cancelled"
+    },
+    {
+      "date": "2026-06-09",
+      "time": "20:52",
+      "minutes": 160
+    },
+    {
+      "date": "2026-06-09",
+      "time": "18:06",
+      "minutes": 31
+    },
+    {
+      "date": "2026-06-08",
+      "time": "22:53",
+      "minutes": 4
+    },
+    {
+      "date": "2026-06-08",
+      "time": "22:24",
+      "minutes": 11
+    },
+    {
+      "date": "2026-06-08",
+      "time": "22:12",
+      "minutes": 10
+    },
+    {
+      "date": "2026-06-08",
+      "time": "20:42",
+      "minutes": 88
+    },
+    {
+      "date": "2026-06-07",
+      "time": "23:03",
+      "minutes": 45
+    },
+    {
+      "date": "2026-06-07",
+      "time": "21:09",
+      "minutes": 75
+    },
+    {
+      "date": "2026-06-07",
+      "time": "21:09",
+      "minutes": 0,
+      "note": "cancelled"
+    },
+    {
+      "date": "2026-06-07",
+      "time": "13:50",
+      "minutes": 4
+    },
+    {
+      "date": "2026-06-07",
+      "time": "13:29",
+      "minutes": 20
+    },
+    {
+      "date": "2026-06-06",
+      "time": "23:36",
+      "minutes": 49
+    },
+    {
+      "date": "2026-06-06",
+      "time": "22:14",
+      "minutes": 34
+    },
+    {
+      "date": "2026-06-05",
+      "time": "23:05",
+      "minutes": 374
+    },
+    {
+      "date": "2026-06-05",
+      "time": "22:17",
+      "minutes": 40
+    },
+    {
+      "date": "2026-06-05",
+      "time": "13:53",
+      "minutes": 0,
+      "note": "cancelled"
+    },
+    {
+      "date": "2026-06-05",
+      "time": "11:44",
+      "minutes": 0,
+      "note": "5 seconds"
+    },
+    {
+      "date": "2026-06-05",
+      "time": "11:43",
+      "minutes": 0,
+      "note": "cancelled"
+    },
+    {
+      "date": "2026-06-04",
+      "time": "22:13",
+      "minutes": 65
+    }
+  ]
+}
