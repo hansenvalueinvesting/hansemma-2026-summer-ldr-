@@ -293,7 +293,7 @@ function render(data){
     <p class="lead">Of every hour apart so far, this much was voice-to-voice.</p>
     <div class="pct-big">${pctOnCall.toFixed(2)}<small>%</small></div>
     <div class="bar"><i style="width:${Math.min(100,pctOnCall*4).toFixed(2)}%"></i></div>
-    <div class="bar-note"><span>${fmtLongDur(totalMin)} on call</span><span>${daysElapsed} days elapsed</span></div>
+    <div class="bar-note"><span>${fmtLongDur(totalMin)} on call</span><span id="elapsed">${daysElapsed}d apart</span></div>
   </div>`;
 
   // records
@@ -324,17 +324,21 @@ function render(data){
 
   app.innerHTML = stats + talking + records + heat + log;
   wireHeatTip();
-  startCountdown(data.summerEnd, endLabel);
+  startCountdown(data.summerStart, data.summerEnd, endLabel);
 }
 
-// live countdown to reunion — days in the caption, hrs/min/sec ticking below
-function startCountdown(summerEnd, endLabel){
+// live countdown to reunion (hrs/min/sec ticking) plus a count-up stopwatch
+// of time apart since the goodbye
+function startCountdown(summerStart, summerEnd, endLabel){
   const [ey,em,ed] = summerEnd.split("-").map(Number);
   // count down to the END of the reunion day, so today counts as a full day
   // apart and the day figure reads 85 rather than 84
   const target = new Date(ey, em-1, ed+1, 0, 0, 0, 0);
+  const [sy,smo,sdy] = summerStart.split("-").map(Number);
+  const since = new Date(sy, smo-1, sdy, 0, 0, 0, 0); // local midnight of the goodbye
   const cap = document.getElementById("countCaption");
   const statDays = document.getElementById("stat-days");
+  const elapsedEl = document.getElementById("elapsed");
   const elD = {h:document.getElementById("cd-h"), m:document.getElementById("cd-m"), s:document.getElementById("cd-s")};
   const pad = n => String(n).padStart(2,"0");
 
@@ -354,6 +358,15 @@ function startCountdown(summerEnd, endLabel){
     elD.h.textContent = hrs;
     elD.m.textContent = pad(min);
     elD.s.textContent = pad(sec);
+
+    // count-up stopwatch: time apart since the goodbye
+    if(elapsedEl){
+      let el = new Date() - since;
+      if(el < 0) el = 0;
+      const e = Math.floor(el/1000);
+      elapsedEl.textContent =
+        `${Math.floor(e/86400)}d ${pad(Math.floor((e%86400)/3600))}:${pad(Math.floor((e%3600)/60))}:${pad(e%60)} apart`;
+    }
 
     if(diff === 0){
       if(startCountdown._t) clearInterval(startCountdown._t);
