@@ -134,6 +134,14 @@
   .cell[data-out="1"]{outline:1px solid rgba(255,255,255,.04)}
   .legend{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-top:14px}
   .legend .sw{width:14px;height:14px;border-radius:4px}
+
+  /* ---- stat charts ---- */
+  .chart{margin-top:16px}
+  .chart svg{width:100%;height:auto;display:block;overflow:visible}
+  .chart.clock{max-width:300px;margin:18px auto 4px}
+  .chart .ax{fill:var(--muted);font-size:10px;font-family:'Nunito Sans',sans-serif}
+  .chart .ax2{fill:var(--cream);font-family:'Fraunces',serif;font-size:15px}
+  #pace path, #clock path{transition:fill-opacity .15s}
   .tip{position:fixed;z-index:50;pointer-events:none;background:#120c22;color:var(--cream);
     border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:12.5px;
     box-shadow:0 10px 30px rgba(0,0,0,.6);opacity:0;transform:translateY(4px);transition:opacity .12s;max-width:200px}
@@ -318,11 +326,13 @@ function render(data){
 
   // heatmap (GitHub style, weeks as columns, Mon..Sun rows)
   const heat = buildHeat(timeByDay, start, end, today);
+  const pace = buildPace(timeByDay, start, end, today);
+  const clock = buildClock(connected);
 
   // log
   const log = buildLog(calls);
 
-  app.innerHTML = stats + talking + records + heat + log;
+  app.innerHTML = stats + talking + records + heat + pace + clock + log;
   wireHeatTip();
   startCountdown(data.summerStart, data.summerEnd, endLabel);
 }
@@ -393,6 +403,105 @@ function colorFor(min){
   if(min<90)  return "rgba(255,159,138,.55)";
   if(min<180) return "rgba(255,126,107,.80)";
   return "rgba(255,159,178,1)";
+}
+
+function buildPace(timeByDay, start, end, today){
+  const DAY=86400000;
+  const totalDays = Math.round((end-start)/DAY)+1;
+  const clampToday = today>end?end:(today<start?start:today);
+  const todayIndex = Math.max(0, Math.min(totalDays-1, Math.round((clampToday-start)/DAY)));
+  const iso=[], cum=[]; let run=0;
+  for(let i=0;i<=todayIndex;i++){
+    const dt=new Date(start.getTime()+i*DAY);
+    const key=dt.toISOString().slice(0,10);
+    run += (timeByDay[key]||0);
+    iso.push(key); cum.push(run/60);
+  }
+  const total = cum[cum.length-1]||0;
+  const yMax = Math.max(1, total*1.12);
+  const W=720,H=240,L=46,R=16,T=16,B=30, pw=W-L-R, ph=H-T-B, base=T+ph;
+  const X=i=> L + (todayIndex<=0?0:(i/todayIndex)*pw); // axis spans start -> today
+  const Y=h=> T + ph - (h/yMax)*ph;
+  let line="", area=`M ${X(0).toFixed(1)} ${base.toFixed(1)} `;
+  for(let i=0;i<=todayIndex;i++){
+    const px=X(i).toFixed(1), py=Y(cum[i]).toFixed(1);
+    line += (i===0?`M ${px} ${py} `:`L ${px} ${py} `);
+    area += `L ${px} ${py} `;
+  }
+  area += `L ${X(todayIndex).toFixed(1)} ${base.toFixed(1)} Z`;
+  const steady = `M ${X(0).toFixed(1)} ${base.toFixed(1)} L ${X(todayIndex).toFixed(1)} ${Y(total).toFixed(1)}`;
+  const yticks=[0, yMax/2, yMax].map(v=>{
+    const yy=Y(v).toFixed(1);
+    return `<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="rgba(255,255,255,.06)"/>`+
+      `<text x="${L-8}" y="${(+yy+3).toFixed(1)}" text-anchor="end" class="ax">${Math.round(v)}h</text>`;
+  }).join("");
+  const xlabels=[0, Math.round(todayIndex/2), todayIndex].filter((v,i,a)=>a.indexOf(v)===i).map(i=>{
+    const dt=new Date(start.getTime()+i*DAY);
+    const anch=i===0?'start':(i===todayIndex?'end':'middle');
+    return `<text x="${X(i).toFixed(1)}" y="${H-10}" text-anchor="${anch}" class="ax">${dt.toLocaleDateString("en-GB",{day:"numeric",month:"short",timeZone:"UTC"})}</text>`;
+  }).join("");
+  const data={L,pw,T,ph,n:cum.length,ti:todayIndex,ymax:yMax,cum:cum.map(v=>+v.toFixed(2)),iso};
+  const avg=(total/Math.max(1,todayIndex+1));
+  return `
+  <div class="panel" style="margin-top:16px">
+    <h2>Talk-time, banked</h2>
+    <p class="lead">Every hour you've logged, stacking up. The dashed line is your steady pace — above it you ran hot, below it, quiet.</p>
+    <div class="chart">
+      <svg viewBox="0 0 ${W} ${H}" id="pace" data-pace='${JSON.stringify(data)}'>
+        <defs><linearGradient id="paceFill" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="rgba(255,126,107,.45)"/><stop offset="1" stop-color="rgba(255,126,107,0)"/>
+        </linearGradient></defs>
+        ${yticks}${xlabels}
+        <path d="${area}" fill="url(#paceFill)"/>
+        <path d="${steady}" fill="none" stroke="rgba(255,210,170,.5)" stroke-width="1.5" stroke-dasharray="5 5"/>
+        <path d="${line}" fill="none" stroke="var(--coral)" stroke-width="2.5" stroke-linejoin="round"/>
+        <line id="paceVLine" x1="0" y1="${T}" x2="0" y2="${base}" stroke="rgba(255,255,255,.25)" style="display:none"/>
+        <circle id="paceDot" r="4" fill="var(--gold)" style="display:none"/>
+        <rect id="paceHit" x="${L}" y="${T}" width="${pw}" height="${ph}" fill="transparent"/>
+      </svg>
+    </div>
+    <div class="bar-note"><span><b style="color:var(--gold)">${total.toFixed(1)} hr</b> banked so far</span><span>${avg.toFixed(1)} hr/day on average</span></div>
+  </div>`;
+}
+
+function buildClock(calls){
+  const byHour=new Array(24).fill(0);
+  calls.forEach(c=>{ const h=parseInt(c.time.slice(0,2),10); if(h>=0&&h<24) byHour[h]+=c.minutes; });
+  const maxMin=Math.max.apply(null, byHour);
+  const peak=byHour.indexOf(maxMin);
+  const cx=130,cy=130,rI=34,rO=112;
+  const ampm=h=>{const ap=h<12?"AM":"PM";let hh=h%12; if(hh===0)hh=12; return `${hh} ${ap}`;};
+  const polar=(r,deg)=>{const a=(deg-90)*Math.PI/180; return [cx+r*Math.cos(a), cy+r*Math.sin(a)];};
+  const wedge=(ri,ro,a0,a1)=>{
+    const o0=polar(ro,a0),o1=polar(ro,a1),i1=polar(ri,a1),i0=polar(ri,a0);
+    return `M${o0[0].toFixed(1)} ${o0[1].toFixed(1)} A${ro} ${ro} 0 0 1 ${o1[0].toFixed(1)} ${o1[1].toFixed(1)} `+
+           `L${i1[0].toFixed(1)} ${i1[1].toFixed(1)} A${ri} ${ri} 0 0 0 ${i0[0].toFixed(1)} ${i0[1].toFixed(1)} Z`;
+  };
+  let wedges="";
+  for(let h=0;h<24;h++){
+    if(byHour[h]<=0) continue;
+    const ratio = maxMin? byHour[h]/maxMin : 0;
+    const ro = rI + ratio*(rO-rI);
+    const isPeak = h===peak;
+    wedges += `<path d="${wedge(rI,ro,h*15+1.2,(h+1)*15-1.2)}" fill="${isPeak?'var(--rose)':'var(--coral)'}" `+
+      `fill-opacity="${(0.35+0.5*ratio).toFixed(2)}" ${isPeak?'stroke="var(--gold)" stroke-width="1.5"':''} data-h="${h}" data-min="${byHour[h]}"/>`;
+  }
+  const ring=`<circle cx="${cx}" cy="${cy}" r="${rI}" fill="none" stroke="rgba(255,255,255,.08)"/>`;
+  const labels=[[0,"12a"],[6,"6a"],[12,"12p"],[18,"6p"]].map(p=>{
+    const xy=polar(rO+13, p[0]*15);
+    return `<text x="${xy[0].toFixed(1)}" y="${(xy[1]+3).toFixed(1)}" text-anchor="middle" class="ax">${p[1]}</text>`;
+  }).join("");
+  const center = maxMin
+    ? `<text x="${cx}" y="${cy-3}" text-anchor="middle" class="ax2">${ampm(peak)}</text><text x="${cx}" y="${cy+13}" text-anchor="middle" class="ax">golden hour</text>`
+    : `<text x="${cx}" y="${cy}" text-anchor="middle" class="ax">no calls yet</text>`;
+  return `
+  <div class="panel" style="margin-top:16px">
+    <h2>Golden hours</h2>
+    <p class="lead">When you're usually on the line, by total minutes (US&nbsp;Eastern). The longest petal is your golden hour.</p>
+    <div class="chart clock">
+      <svg viewBox="0 0 260 260" id="clock">${ring}${wedges}${labels}${center}</svg>
+    </div>
+  </div>`;
 }
 
 function buildHeat(timeByDay, start, end, today){
@@ -471,6 +580,51 @@ function wireHeatTip(){
       tip.style.top=(e.clientY+14)+"px";
     });
     heat.addEventListener("mouseout",()=>tip.classList.remove("show"));
+  }
+
+  // pace chart hover: marker + cumulative tooltip
+  const paceSvg=document.getElementById("pace");
+  if(paceSvg){
+    const d=JSON.parse(paceSvg.dataset.pace);
+    const hit=document.getElementById("paceHit");
+    const dot=document.getElementById("paceDot");
+    const vline=document.getElementById("paceVLine");
+    const W=720;
+    const Xi=i=> d.L + (d.n<=1?0:(i/(d.n-1))*d.pw);
+    const Yh=h=> d.T + d.ph - (h/d.ymax)*d.ph;
+    const move=e=>{
+      const r=paceSvg.getBoundingClientRect();
+      const sx=((e.clientX-r.left)/r.width)*W;
+      let idx=Math.round(((sx-d.L)/d.pw)*(d.n-1));
+      idx=Math.max(0,Math.min(d.ti, idx));
+      const px=Xi(idx).toFixed(1), py=Yh(d.cum[idx]).toFixed(1);
+      dot.setAttribute("cx",px); dot.setAttribute("cy",py); dot.style.display="";
+      vline.setAttribute("x1",px); vline.setAttribute("x2",px); vline.style.display="";
+      tip.innerHTML=`<b>${prettyDate(d.iso[idx])}</b><br>${d.cum[idx].toFixed(1)} hr together`;
+      tip.classList.add("show");
+      tip.style.left=Math.min(window.innerWidth-210,e.clientX+12)+"px";
+      tip.style.top=(e.clientY+14)+"px";
+    };
+    hit.addEventListener("mousemove",move);
+    hit.addEventListener("mouseover",move);
+    hit.addEventListener("mouseout",()=>{tip.classList.remove("show");dot.style.display="none";vline.style.display="none";});
+  }
+
+  // golden-hour clock hover
+  const clock=document.getElementById("clock");
+  if(clock){
+    const ampm=h=>{const ap=h<12?"AM":"PM";let hh=h%12; if(hh===0)hh=12; return `${hh} ${ap}`;};
+    clock.addEventListener("mouseover",e=>{
+      const p=e.target.closest("path[data-h]"); if(!p)return;
+      const h=+p.dataset.h;
+      tip.innerHTML=`<b>${ampm(h)} – ${ampm((h+1)%24)}</b><br>${fmtLongDur(+p.dataset.min)} on call`;
+      tip.classList.add("show");
+    });
+    clock.addEventListener("mousemove",e=>{
+      tip.style.left=Math.min(window.innerWidth-210,e.clientX+12)+"px";
+      tip.style.top=(e.clientY+14)+"px";
+    });
+    clock.addEventListener("mouseout",()=>tip.classList.remove("show"));
   }
 }
 </script>
