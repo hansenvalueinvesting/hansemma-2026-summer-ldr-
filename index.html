@@ -83,6 +83,8 @@
   .grid{display:grid;gap:16px;margin-top:30px}
   .stats{grid-template-columns:repeat(4,1fr)}
   @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .duo{grid-template-columns:1.3fr 1fr;align-items:stretch}
+  @media(max-width:760px){.duo{grid-template-columns:1fr}}
   .card{
     background:linear-gradient(180deg, rgba(61,47,84,.55), rgba(42,33,71,.5));
     border:1px solid var(--line);border-radius:20px;padding:22px 20px;
@@ -332,7 +334,8 @@ function render(data){
   // log
   const log = buildLog(calls);
 
-  app.innerHTML = stats + talking + pace + records + heat + clock + log;
+  const daybyday = `<div class="sec-label">day by day</div><div class="grid duo" style="margin-top:16px">${heat}${clock}</div>`;
+  app.innerHTML = stats + talking + pace + records + daybyday + log;
   wireHeatTip();
   startCountdown(data.summerStart, data.summerEnd, endLabel);
 }
@@ -495,7 +498,7 @@ function buildClock(calls){
     ? `<text x="${cx}" y="${cy-3}" text-anchor="middle" class="ax2">${ampm(peak)}</text><text x="${cx}" y="${cy+13}" text-anchor="middle" class="ax">golden hour</text>`
     : `<text x="${cx}" y="${cy}" text-anchor="middle" class="ax">no calls yet</text>`;
   return `
-  <div class="panel" style="margin-top:16px">
+  <div class="panel" style="margin:0">
     <h2>Golden hours</h2>
     <p class="lead">When you're usually on the line, by total minutes (US&nbsp;Eastern). The longest petal is your golden hour.</p>
     <div class="chart clock">
@@ -529,8 +532,7 @@ function buildHeat(timeByDay, start, end, today){
   }).join("");
 
   return `
-  <div class="sec-label">day by day</div>
-  <div class="panel">
+  <div class="panel" style="margin:0">
     <div class="heat-head">
       <div><h2>Call heatmap</h2><p class="lead" style="margin-bottom:0">Warmer squares, longer talks. Every box is a day of summer.</p></div>
     </div>
