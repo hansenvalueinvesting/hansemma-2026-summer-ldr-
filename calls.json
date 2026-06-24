@@ -1,16 +1,16 @@
 {
-  "_README": "Add a new call by copying a line in the calls array below. Format: {\"date\":\"YYYY-MM-DD\", \"time\":\"HH:MM\", \"minutes\": <number>}. Keep dates in ISO YYYY-MM-DD and minutes greater than 0 -- every entry is a connected call. Summer window is set by summerStart/summerEnd.",
+  "_README": "Add a new call by copying a line in the calls array below. Format: {\"date\":\"YYYY-MM-DD\", \"time\":\"HH:MM\", \"minutes\": <number>}. All times are US Eastern (Emma's timezone) -- convert before adding. Keep dates in ISO YYYY-MM-DD and minutes greater than 0 -- every entry is a connected call. Summer window is set by summerStart/summerEnd.",
   "summerStart": "2026-06-05",
   "summerEnd": "2026-09-15",
   "calls": [
     {
       "date": "2026-06-23",
-      "time": "21:04",
+      "time": "22:04",
       "minutes": 38
     },
     {
       "date": "2026-06-23",
-      "time": "20:09",
+      "time": "21:09",
       "minutes": 55
     },
     {
